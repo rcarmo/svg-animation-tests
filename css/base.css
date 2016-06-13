@@ -1,0 +1,12 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+}
+a, a:hover, a:active, a:visited {
+    color: deepskyblue;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}

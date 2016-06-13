@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <title>Digital Signage Testing</title>
+        <link rel="stylesheet" type="text/css" href="css/base.css"/>
+        <style>
+            a.todo {
+                color: red;
+            }
+            ul.double {
+                width: 100%;
+                overflow: hidden;
+            }
+            ul.double li {
+                width: 25%;
+                display: block;
+                float: left;
+            }
+            ul.double li a {
+                text-align: center;
+                padding: 1em;
+                display: block;
+            }
+            ul.double a:hover {
+                background-color: blue;
+                border-color: 1px solid darkturquoise;
+            }
+
+            #placeholder, #blank {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 0;
+                padding: 0;
+                width: 1280px;
+                height: 720px;
+                border: none;
+            }
+        </style>
+        <!-- <META http&#45;equiv="refresh" content="15;URL=screens/counter/index.html"> -->
+    </head>
+    <body>
+        <div id="counter"></div>
+        <iframe id="placeholder"></iframe>
+        <img id="blank" src="data:image/gif;base64,R0lGODdhAQABAPAAAAAAAAAAACH/C0ltYWdlTWFnaWNrB2dhbW1hPTEALAAAAAABAAEAQAICRAEAOw==">
+        <ul class="double">
+            <li><a href="index.html?">Reload</a></li>
+            <li><div id="test"></div></li>
+        </ul>
+        <H2>SVG Animation Tests</H2>
+        <ul class="double">
+            <li><a href="circle1/circle1.html">Rotating Symbol</a></li>
+            <li><a href="one_layer/one_layer.html">1 layer</a></li>
+            <li><a href="two_layers/two_layers.html">2 layers</a></li>
+            <li><a href="four_layers/four_layers.html">4 layers</a></li>
+            <li><a href="eight_layers/eight_layers.html">8 layers</a></li>
+            <li><a href="sixteen_layers/sixteen_layers.html">16 layers</a></li>
+            <li><a href="thirty-two_layers/thirty-two_layers.html">32 layers</a></li>
+        </ul>
+        <hr>
+
+        <script>
+        (function () {
+            var PLAY_LIST_TIME = 3 * 60 * 1000;
+
+            setTimeout(function() {
+                document.getElementById('test').innerText = window.device.MACAddress + "," + window.device.IPAddress;
+            }, 2 * 1000);
+
+            var renderLink = function (link) {
+                // overkill anti-white-flash tactics
+                var holder = document.getElementById('placeholder');
+                var blank  = document.getElementById('blank');
+                // hide the iframe
+                holder.style.top = 2000;
+                // set the iframe to black content
+                // holder.src = 'data:text/html;base64,PHN0eWxlPmJvZHkgeyBiYWNrZ3JvdW5kOiBibGFjazsgfTwvc3R5bGU+';
+                holder.src = link.href;
+                blank.style.display = 'block';
+
+                setTimeout(function(){
+                    holder.style.top = 0;
+                    holder.style.display = 'block';
+                    setTimeout(function(){
+                        blank.style.display = 'none';
+                    }, 50); // 1/25th of a second (one frame)
+                }, 100);
+            };
+
+            // TODO (Rui): make sure the Android webview recovers from loss of connectivity
+
+            function play() {
+                var link = links.shift();
+                links.push(link);
+                renderLink(link)
+            }
+
+            function start() {
+                links = Array.prototype.slice.call(document.querySelectorAll('a.enabled'));
+                play();
+                setInterval(play, PLAY_LIST_TIME);
+            }
+
+            links = Array.prototype.slice.call(document.querySelectorAll('a'));
+            for(i = 0;i < links.length; i++) {
+                 el = links[i];
+                 if(el.href[el.href.length-1]==="#") {
+                     el.className += " todo";
+                 }
+
+                 /*
+                 if(el.href.indexOf("data:") != 0) {
+                     el.href = el.href + "?_ts="+new Date().getTime();
+                 }
+                 */
+             };
+            var time = 60;
+            function preroll() {
+                if (--time) {
+                    setTimeout(preroll, 1000);
+                    document.getElementById("counter").innerHTML = '' + (time + 1);
+                } else { start(); }
+            }
+//            preroll();
+
+        }());
+        </script>
+    </body>
+</html>
